@@ -11,4 +11,4 @@ var PersonSchema = new Schema({
   owner_email: String
 });
 
-module.exports = mongoose.model('Person', PersonSchema);
+module.exports = mongoose.model('Person', PersonSchema, "persons");

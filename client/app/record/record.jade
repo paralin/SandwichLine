@@ -2,11 +2,32 @@ div(ng-include='"components/navbar/navbar.html"')
 .container
   p
     | The following is a list of people in the line that have not exited the
-    | line.
+    | line, with the end of the line at the top and the beginning at the bottom.
+  p
+    span.glyphicon.glyphicon-trash.trash
+    |  deletes (don't use this unless you accidentally added
+    | a person in the line). 
+  p
+    span.glyphicon.glyphicon-ok.complete
+    |  marks the person as complete (after checking out).
+  p
+    span.glyphicon.glyphicon-ok.trash
+    |  marks the person as left (because line was too long).
   ul.list-group
-    li.list-group-item(ng-repeat='person in persons')
-      strong {{user.name}}
+    li.list-group-item
+      button.btn.btn-primary(ng-click="create()") Add Person
+      span.pull-right 
+        input(type="checkbox",ng-model="options.showExited")
+        |  Show exited people
+    li.list-group-item(ng-repeat='person in persons | filter:{has_exited: options.showExited} | orderBy: "time_entered"', ng-class="{'list-group-item-danger': person.has_exited}")
+      strong {{person._id}}
+      |  {{person.has_exited? 'Exited' : 'Entered'}} 
+      span(am-time-ago="person.has_exited?person.time_exited:person.time_entered")
       br
-      span.text-muted {{user.email}}
-      a.trash(ng-click='delete(user)')
-        span.glyphicon.glyphicon-trash.pull-right
+      span.text-muted Created by: {{person.owner_email}}
+      a.trash(ng-click='delete(person)')
+        span.glyphicon.glyphicon-trash.pull-right(style="margin-right:5px")
+      a.complete(ng-click='setComplete(person)',ng-hide="person.has_exited")
+        span.glyphicon.glyphicon-ok.pull-right(style="margin-right:5px")
+      a.trash(ng-click='setLeft(person)',ng-hide="person.has_exited")
+        span.glyphicon.glyphicon-ban-circle.pull-right(style="margin-right:5px")
